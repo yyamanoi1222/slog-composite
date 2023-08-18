@@ -19,4 +19,10 @@ func main() {
 
 	lgrWAttrs := lgr.With(slog.String("key", "value"))
 	lgrWAttrs.Info("Hello World! with Attrs")
+
+	lgrWithLevel := slogcomposite.New(
+		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+	)
+	lgrWithLevel.Debug("Hello World!")
 }

@@ -1,8 +1,8 @@
 package slogcomposite
 
 import (
-	"log/slog"
 	"context"
+	"log/slog"
 )
 
 type handler struct {
@@ -14,15 +14,17 @@ func newHandler(handlers []slog.Handler) *handler {
 }
 
 func (h *handler) Enabled(ctx context.Context, level slog.Level) bool {
-	enabled := true
-	for _, handler := range h.handlers {
-		enabled = enabled && handler.Enabled(ctx, level)
-	}
-	return enabled
+	// Always return true here.
+	// determine Enabled for each Handler in the Handle method
+	return true
 }
 
 func (h *handler) Handle(ctx context.Context, record slog.Record) error {
 	for _, handler := range h.handlers {
+		if !handler.Enabled(ctx, record.Level) {
+			continue
+		}
+
 		if err := handler.Handle(ctx, record); err != nil {
 			return err
 		}
@@ -45,4 +47,3 @@ func (h *handler) WithGroup(name string) slog.Handler {
 	}
 	return newHandler
 }
-
